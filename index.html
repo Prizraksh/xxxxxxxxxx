@@ -1,0 +1,958 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Тебе срочно нужно улыбнуться</title>
+  <style>
+    :root {
+      --ink: #4b3348;
+      --berry: #e95d7d;
+      --berry-dark: #c64269;
+      --cream: #fff9f1;
+      --paper: rgba(255, 255, 255, .78);
+      --yellow: #ffd970;
+      --shadow: 0 24px 60px rgba(121, 57, 88, .18);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      min-height: 100vh;
+      min-height: 100svh;
+      margin: 0;
+      overflow-x: hidden;
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 13% 12%, rgba(255,255,255,.95) 0 7%, transparent 17%),
+        radial-gradient(circle at 85% 18%, rgba(255,255,255,.65) 0 6%, transparent 16%),
+        linear-gradient(145deg, #ffdde6 0%, #fff1cf 48%, #daf2ea 100%);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      opacity: .42;
+      pointer-events: none;
+      background-image: radial-gradient(#d4849c 1px, transparent 1px);
+      background-size: 22px 22px;
+      mask-image: linear-gradient(to bottom, #000, transparent 85%);
+    }
+
+    button, input {
+      font: inherit;
+    }
+
+    button {
+      color: inherit;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .blob {
+      position: fixed;
+      z-index: -1;
+      border-radius: 50%;
+      filter: blur(4px);
+      animation: drift 8s ease-in-out infinite alternate;
+    }
+
+    .blob.one {
+      width: 240px;
+      height: 240px;
+      top: -70px;
+      right: -60px;
+      background: rgba(255, 140, 169, .28);
+    }
+
+    .blob.two {
+      width: 190px;
+      height: 190px;
+      bottom: 2%;
+      left: -65px;
+      background: rgba(101, 199, 167, .25);
+      animation-delay: -3s;
+    }
+
+    .topbar {
+      position: fixed;
+      z-index: 20;
+      top: 18px;
+      left: 50%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: min(92%, 1020px);
+      padding: 10px 12px 10px 18px;
+      border: 1px solid rgba(255,255,255,.7);
+      border-radius: 999px;
+      background: rgba(255,255,255,.58);
+      box-shadow: 0 10px 35px rgba(113, 56, 85, .12);
+      backdrop-filter: blur(16px);
+      transform: translateX(-50%);
+    }
+
+    .brand {
+      margin-right: auto;
+      font-family: "Segoe Print", "Comic Sans MS", cursive;
+      font-size: clamp(17px, 3vw, 22px);
+    }
+
+    .score {
+      white-space: nowrap;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .pill {
+      border: 0;
+      border-radius: 999px;
+      padding: 11px 17px;
+      color: white;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--berry), var(--berry-dark));
+      box-shadow: 0 8px 20px rgba(198, 66, 105, .24);
+      cursor: pointer;
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+
+    .pill:hover {
+      transform: translateY(-2px) rotate(-1deg);
+      box-shadow: 0 12px 24px rgba(198, 66, 105, .3);
+    }
+
+    main {
+      display: grid;
+      min-height: 100vh;
+      place-items: center;
+      padding: 110px 20px 62px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(300px, .82fr);
+      align-items: center;
+      gap: clamp(35px, 7vw, 90px);
+      width: min(1100px, 100%);
+    }
+
+    .copy {
+      min-width: 0;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 18px;
+      padding: 8px 13px;
+      border: 1px solid rgba(233, 93, 125, .18);
+      border-radius: 999px;
+      color: var(--berry-dark);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      background: rgba(255,255,255,.48);
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--berry);
+      box-shadow: 0 0 0 5px rgba(233, 93, 125, .13);
+      animation: pulse 1.8s infinite;
+    }
+
+    h1 {
+      max-width: 720px;
+      margin: 0;
+      font-family: "Segoe Print", "Comic Sans MS", cursive;
+      font-size: clamp(58px, 9vw, 116px);
+      font-weight: 400;
+      line-height: .86;
+      letter-spacing: -.025em;
+    }
+
+    h1 span {
+      display: inline-block;
+      color: var(--berry);
+      text-shadow: 3px 4px 0 rgba(255,255,255,.75);
+      transform: rotate(-2deg);
+    }
+
+    .subtitle {
+      max-width: 610px;
+      margin: 25px 0 0;
+      font-size: clamp(15px, 2vw, 18px);
+      line-height: 1.75;
+    }
+
+    .tiny-note {
+      margin: 18px 0 0;
+      color: rgba(75, 51, 72, .62);
+      font-family: "Segoe Print", "Comic Sans MS", cursive;
+      font-size: 18px;
+      transform: rotate(-1deg);
+    }
+
+    .photo-zone {
+      position: relative;
+      display: grid;
+      place-items: center;
+      min-height: 510px;
+      isolation: isolate;
+    }
+
+    .sun {
+      position: absolute;
+      z-index: -2;
+      width: 380px;
+      height: 380px;
+      border-radius: 50%;
+      background: rgba(255, 217, 112, .46);
+      box-shadow: 0 0 0 25px rgba(255,255,255,.2), 0 0 0 52px rgba(255,255,255,.1);
+      animation: breathe 4s ease-in-out infinite;
+    }
+
+    .spark {
+      position: absolute;
+      color: #e49a38;
+      font-size: 28px;
+      animation: twinkle 2.2s ease-in-out infinite;
+    }
+
+    .spark.s1 { top: 5%; right: 10%; }
+    .spark.s2 { bottom: 15%; left: 3%; animation-delay: -.8s; }
+    .spark.s3 { top: 20%; left: 2%; animation-delay: -1.4s; }
+
+    .polaroid {
+      position: relative;
+      width: min(360px, 84vw);
+      padding: 15px 15px 74px;
+      border: 0;
+      color: var(--ink);
+      background: #fffdf9;
+      box-shadow: var(--shadow), 0 4px 0 rgba(255,255,255,.8) inset;
+      cursor: default;
+      transform: rotate(4deg);
+      transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s ease;
+    }
+
+    .polaroid::before, .polaroid::after {
+      content: "";
+      position: absolute;
+      z-index: 3;
+      width: 78px;
+      height: 24px;
+      background: rgba(255, 220, 147, .7);
+      box-shadow: 0 2px 5px rgba(98, 68, 42, .08);
+    }
+
+    .polaroid::before {
+      top: -8px;
+      left: -25px;
+      transform: rotate(-37deg);
+    }
+
+    .polaroid::after {
+      right: -25px;
+      bottom: 35px;
+      transform: rotate(-42deg);
+    }
+
+    .polaroid:hover {
+      box-shadow: 0 30px 70px rgba(121, 57, 88, .25);
+      transform: rotate(1deg) scale(1.025);
+    }
+
+    .photo-frame {
+      position: relative;
+      display: grid;
+      overflow: hidden;
+      aspect-ratio: 1;
+      place-items: center;
+      border: 2px solid rgba(198, 66, 105, .22);
+      color: var(--berry-dark);
+      background:
+        linear-gradient(45deg, rgba(255,255,255,.25), rgba(255,255,255,.65)),
+        linear-gradient(135deg, #ffdbe5, #fff0bd);
+    }
+
+    .photo-frame img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 1;
+    }
+
+    .caption {
+      position: absolute;
+      right: 10px;
+      bottom: 16px;
+      left: 10px;
+      overflow: hidden;
+      font-family: "Segoe Print", "Comic Sans MS", cursive;
+      font-size: 25px;
+      line-height: 1.2;
+      text-align: center;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .instructions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 28px;
+    }
+
+    .hint {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 13px;
+      border: 1px solid rgba(255,255,255,.65);
+      border-radius: 13px;
+      font-size: 12px;
+      font-weight: 700;
+      background: rgba(255,255,255,.42);
+      box-shadow: 0 8px 22px rgba(80, 53, 73, .07);
+    }
+
+    .hint i {
+      display: inline-block;
+      font-style: normal;
+      animation: nudge 1.4s ease-in-out infinite;
+    }
+
+    .dachshund {
+      --scale: 1;
+      position: fixed;
+      z-index: 12;
+      left: -180px;
+      width: 132px;
+      height: 68px;
+      border: 0;
+      padding: 0;
+      background: transparent;
+      cursor: crosshair;
+      filter: drop-shadow(0 9px 8px rgba(85, 51, 62, .17));
+      animation: fly var(--duration) linear forwards;
+      transition: filter .15s ease;
+    }
+
+    .dachshund:hover {
+      filter: drop-shadow(0 12px 10px rgba(85, 51, 62, .27)) brightness(1.07);
+    }
+
+    .dachshund svg {
+      overflow: visible;
+      width: 100%;
+      height: 100%;
+      animation: dogBob .6s ease-in-out infinite alternate;
+    }
+
+    .dachshund.caught {
+      animation: caught .45s ease-in forwards;
+      pointer-events: none;
+    }
+
+    .dog-leg {
+      transform-box: fill-box;
+      transform-origin: top center;
+      animation: runLeg .22s ease-in-out infinite alternate;
+    }
+
+    .dog-leg.back {
+      animation-delay: -.22s;
+    }
+
+    .jaw-wrap {
+      position: fixed;
+      z-index: 15;
+      right: clamp(15px, 4vw, 55px);
+      bottom: 30px;
+      width: 126px;
+      height: 160px;
+      border: 0;
+      padding: 0;
+      background: transparent;
+      cursor: pointer;
+      filter: drop-shadow(0 14px 12px rgba(96, 44, 55, .22));
+      animation: jawHop 1.6s cubic-bezier(.55,.05,.55,.95) infinite;
+    }
+
+    .jaw {
+      position: absolute;
+      right: 3px;
+      bottom: 0;
+      width: 112px;
+      height: 96px;
+      transform-origin: bottom center;
+      transition: transform .2s ease;
+    }
+
+    .jaw-top, .jaw-bottom {
+      position: absolute;
+      left: 6px;
+      width: 100px;
+      height: 47px;
+      border: 3px solid #af2944;
+      background: linear-gradient(#f34d67, #d82f50);
+      box-shadow: inset 0 -5px 0 rgba(155, 29, 58, .14);
+    }
+
+    .jaw-top {
+      z-index: 2;
+      top: 3px;
+      border-radius: 19px 19px 8px 8px;
+      transform-origin: 8px bottom;
+      animation: chompTop .65s ease-in-out infinite alternate;
+    }
+
+    .jaw-bottom {
+      bottom: 2px;
+      border-radius: 8px 8px 19px 19px;
+      transform-origin: 8px top;
+      animation: chompBottom .65s ease-in-out infinite alternate;
+    }
+
+    .teeth {
+      position: absolute;
+      left: 6px;
+      display: flex;
+      z-index: 4;
+      align-items: center;
+      justify-content: center;
+      gap: 1px;
+      width: 100px;
+    }
+
+    .teeth.top { top: 38px; }
+    .teeth.bottom { top: 52px; transform: rotate(180deg); }
+
+    .tooth {
+      width: 15px;
+      height: 17px;
+      border: 1px solid #dfd7d1;
+      border-radius: 3px 3px 8px 8px;
+      background: #fffdf5;
+    }
+
+    .eyes {
+      position: absolute;
+      z-index: 5;
+      top: -43px;
+      left: 19px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .eye {
+      position: relative;
+      width: 36px;
+      height: 42px;
+      border: 2px solid #e5ded9;
+      border-radius: 50%;
+      background: #fff;
+    }
+
+    .pupil {
+      position: absolute;
+      top: 13px;
+      left: 13px;
+      width: 13px;
+      height: 15px;
+      border-radius: 50%;
+      background: #352a35;
+      transition: transform .08s linear;
+    }
+
+    .key {
+      position: absolute;
+      z-index: -1;
+      top: 37px;
+      right: -12px;
+      width: 25px;
+      height: 9px;
+      border: 3px solid #9d2640;
+      border-left: 0;
+      border-radius: 0 12px 12px 0;
+      background: #f35a70;
+      transform-origin: left center;
+      animation: wind 1.5s linear infinite;
+    }
+
+    .jaw-bubble {
+      position: absolute;
+      right: 7px;
+      bottom: 112px;
+      width: 118px;
+      padding: 7px 9px;
+      border: 1px solid rgba(255,255,255,.8);
+      border-radius: 14px 14px 4px 14px;
+      font-size: 10px;
+      font-weight: 700;
+      line-height: 1.4;
+      background: rgba(255,255,255,.8);
+      box-shadow: 0 8px 20px rgba(75, 51, 72, .12);
+      backdrop-filter: blur(8px);
+      animation: bubbleBob 1.6s ease-in-out infinite alternate;
+    }
+
+    .jaw-wrap.wound {
+      animation-duration: .65s;
+    }
+
+    .jaw-wrap.wound .jaw-top,
+    .jaw-wrap.wound .jaw-bottom {
+      animation-duration: .16s;
+    }
+
+    .toast {
+      position: fixed;
+      z-index: 50;
+      top: 86px;
+      left: 50%;
+      max-width: calc(100% - 30px);
+      padding: 12px 17px;
+      border-radius: 14px;
+      color: white;
+      font-size: 13px;
+      font-weight: 700;
+      text-align: center;
+      background: var(--berry-dark);
+      box-shadow: 0 12px 30px rgba(130, 43, 71, .22);
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(-50%, -12px);
+      transition: opacity .25s ease, transform .25s ease;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    .confetti {
+      position: fixed;
+      z-index: 40;
+      width: 9px;
+      height: 13px;
+      border-radius: 3px;
+      pointer-events: none;
+      animation: confetti .8s ease-out forwards;
+    }
+
+    @keyframes fly {
+      0% { transform: translate(-30px, 0) rotate(-4deg) scale(var(--scale)); }
+      20% { transform: translate(25vw, -30px) rotate(4deg) scale(var(--scale)); }
+      50% { transform: translate(55vw, 25px) rotate(-3deg) scale(var(--scale)); }
+      80% { transform: translate(85vw, -20px) rotate(3deg) scale(var(--scale)); }
+      100% { transform: translate(calc(100vw + 220px), 5px) rotate(-2deg) scale(var(--scale)); }
+    }
+
+    @keyframes caught {
+      to { opacity: 0; transform: scale(2.2) rotate(18deg); filter: blur(7px); }
+    }
+
+    @keyframes dogBob {
+      to { transform: translateY(-7px) rotate(2deg); }
+    }
+
+    @keyframes runLeg {
+      from { transform: rotate(20deg); }
+      to { transform: rotate(-23deg); }
+    }
+
+    @keyframes jawHop {
+      0%, 100% { transform: translateY(0) rotate(-4deg); }
+      45% { transform: translateY(-48px) rotate(7deg); }
+      55% { transform: translateY(-48px) rotate(7deg); }
+    }
+
+    @keyframes chompTop {
+      from { transform: rotate(-8deg); }
+      to { transform: rotate(5deg); }
+    }
+
+    @keyframes chompBottom {
+      from { transform: rotate(8deg); }
+      to { transform: rotate(-5deg); }
+    }
+
+    @keyframes wind {
+      to { transform: rotateX(360deg); }
+    }
+
+    @keyframes bubbleBob {
+      to { transform: translateY(-6px) rotate(2deg); }
+    }
+
+    @keyframes confetti {
+      to { opacity: 0; transform: translate(var(--x), var(--y)) rotate(var(--r)); }
+    }
+
+    @keyframes drift {
+      to { transform: translate(25px, 30px) scale(1.08); }
+    }
+
+    @keyframes breathe {
+      50% { transform: scale(1.06); }
+    }
+
+    @keyframes twinkle {
+      50% { opacity: .35; transform: scale(.7) rotate(25deg); }
+    }
+
+    @keyframes pulse {
+      50% { box-shadow: 0 0 0 8px rgba(233, 93, 125, 0); }
+    }
+
+    @keyframes nudge {
+      50% { transform: translateX(4px); }
+    }
+
+    @media (max-width: 850px) {
+      .hero {
+        grid-template-columns: 1fr;
+        gap: 15px;
+        text-align: center;
+      }
+
+      .copy {
+        display: grid;
+        place-items: center;
+      }
+
+      .subtitle {
+        margin-top: 18px;
+      }
+
+      .photo-zone {
+        min-height: 440px;
+      }
+
+      .instructions {
+        justify-content: center;
+      }
+
+      .sun {
+        width: 320px;
+        height: 320px;
+      }
+
+      .jaw-wrap {
+        width: 105px;
+        transform: scale(.86);
+        transform-origin: bottom right;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .topbar {
+        top: calc(8px + env(safe-area-inset-top));
+        width: calc(100% - 20px);
+        max-width: calc(100vw - 20px);
+        padding: 8px 9px 8px 13px;
+        gap: 6px;
+        backdrop-filter: none;
+      }
+
+      .brand {
+        display: none;
+      }
+
+      .score {
+        margin-right: auto;
+        font-size: 11px;
+      }
+
+      .pill {
+        flex: 0 0 auto;
+        padding: 9px 11px;
+        font-size: 11px;
+      }
+
+      main {
+        padding: calc(84px + env(safe-area-inset-top)) 14px calc(48px + env(safe-area-inset-bottom));
+      }
+
+      h1 {
+        max-width: 100%;
+        font-size: clamp(48px, 13.8vw, 56px);
+        line-height: .92;
+        letter-spacing: -.045em;
+      }
+
+      .copy,
+      .subtitle,
+      .tiny-note {
+        width: 100%;
+        max-width: 100%;
+      }
+
+      .photo-zone {
+        min-height: 390px;
+      }
+
+      .polaroid {
+        width: min(340px, 88vw);
+        padding: 11px 11px 60px;
+        transform: rotate(2deg);
+      }
+
+      .polaroid:hover {
+        transform: rotate(2deg);
+      }
+
+      .caption {
+        bottom: 13px;
+        font-size: 21px;
+      }
+
+      .jaw-wrap {
+        right: max(2px, env(safe-area-inset-right));
+        bottom: calc(4px + env(safe-area-inset-bottom));
+        scale: .78;
+      }
+
+      .jaw-bubble {
+        backdrop-filter: none;
+      }
+
+      .hint:last-child {
+        display: none;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="blob one"></div>
+  <div class="blob two"></div>
+
+  <header class="topbar">
+    <div class="brand">экстренная доставка хорошего настроения</div>
+    <div class="score">Поймано такс: <span id="score">0</span></div>
+    <button class="pill" id="cheerButton" type="button">Обнять</button>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="copy">
+        <p class="eyebrow">официальное напоминание</p>
+        <h1>Ты чудесная.<br><span>Вот и всё.</span></h1>
+        <p class="subtitle">
+          <br>Как говорил Платина:<br>
+          Чем глубже печаль врезается в твоё существо, 
+          тем больше радости ты можешь вместить.<br>
+
+          Как сказал Халиль Джебран из эссе “О радости и печали”:<br>
+          Мои мозги полетели на Нептун
+          Ги-ги-ги-ги-гикаю
+          Пролетел Юпитер, пролетел Сатурн
+          Я ги-ги-ги-ги-гикаю
+          Да, она хочет быть с таким, как я, типом
+          Ги-ги-ги-ги-гикаю (Э, э)
+          Я залез в неё, как будто кенгуру
+          Я ги-ги-ги-ги-гикаю
+
+
+
+
+        </p>
+        <p class="tiny-note">P.S. Таксы уже вылетели на спасательную операцию.</p>
+        <div class="instructions">
+          <div class="hint"><i>☝</i> лови пролетающих такс</div>
+          <div class="hint"><i>↗</i> нажми на джарольда!!</div>
+        </div>
+      </div>
+
+      <div class="photo-zone">
+        <div class="sun"></div>
+        <div class="spark s1">✦</div>
+        <div class="spark s2">✧</div>
+        <div class="spark s3">✦</div>
+        <div class="polaroid">
+          <div class="photo-frame">
+            <img src="5fdfd41c9a18cd4_upscaled.jpg" width="1024" height="1024" alt="Такса напоминает, что Ксана умница и красавица" decoding="async" fetchpriority="high">
+          </div>
+          <div class="caption">такса говорит вот это ты огонь!!!</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <button class="jaw-wrap" id="jaw" type="button" aria-label="Завести прыгающую челюсть">
+    <span class="jaw-bubble">клац-клац-клац-клац-клац-клац-клац</span>
+    <span class="jaw">
+      <span class="eyes">
+        <span class="eye"><span class="pupil"></span></span>
+        <span class="eye"><span class="pupil"></span></span>
+      </span>
+      <span class="key"></span>
+      <span class="jaw-top"></span>
+      <span class="jaw-bottom"></span>
+      <span class="teeth top">
+        <span class="tooth"></span><span class="tooth"></span><span class="tooth"></span>
+        <span class="tooth"></span><span class="tooth"></span><span class="tooth"></span>
+      </span>
+      <span class="teeth bottom">
+        <span class="tooth"></span><span class="tooth"></span><span class="tooth"></span>
+        <span class="tooth"></span><span class="tooth"></span><span class="tooth"></span>
+      </span>
+    </span>
+  </button>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <script>
+    const scoreNode = document.querySelector("#score");
+    const cheerButton = document.querySelector("#cheerButton");
+    const jaw = document.querySelector("#jaw");
+    const toast = document.querySelector("#toast");
+    const pupils = document.querySelectorAll(".pupil");
+    const isCompact = window.matchMedia("(max-width: 560px)").matches;
+
+    let score = 0;
+    let toastTimer;
+
+    const messages = [
+      "Ты справляешься лучше, чем тебе кажется.",
+      "Сегодня можно делать всё в режиме бережности.",
+      "Ты заслуживаешь тёплый чай и никуда не спешить.",
+      "Плохой день — это не плохая ты.",
+      "Улыбка не обязательна. Я всё равно рядом.",
+      "Срочное сообщение: ты очень-очень важная."
+    ];
+
+    const dogColors = [
+      ["#b96838", "#6b3927"],
+      ["#d89453", "#854829"],
+      ["#824a34", "#3f2a29"],
+      ["#e2a05f", "#a75632"]
+    ];
+
+    function showToast(message) {
+      clearTimeout(toastTimer);
+      toast.textContent = message;
+      toast.classList.add("show");
+      toastTimer = setTimeout(() => toast.classList.remove("show"), 2600);
+    }
+
+    function burst(x, y, amount = 18) {
+      amount = isCompact ? Math.min(amount, 18) : amount;
+      const colors = ["#e95d7d", "#ffd970", "#67c6aa", "#9d7bd8", "#ffffff"];
+      for (let i = 0; i < amount; i++) {
+        const piece = document.createElement("span");
+        piece.className = "confetti";
+        piece.style.left = `${x}px`;
+        piece.style.top = `${y}px`;
+        piece.style.background = colors[i % colors.length];
+        piece.style.setProperty("--x", `${(Math.random() - .5) * 230}px`);
+        piece.style.setProperty("--y", `${(Math.random() - .75) * 220}px`);
+        piece.style.setProperty("--r", `${Math.random() * 520 - 260}deg`);
+        document.body.append(piece);
+        setTimeout(() => piece.remove(), 900);
+      }
+    }
+
+    function dogSvg(primary, dark) {
+      return `
+        <svg viewBox="0 0 170 86" aria-hidden="true">
+          <path d="M24 38 C15 31 13 18 22 15 C30 12 33 24 32 31" fill="none" stroke="${dark}" stroke-width="8" stroke-linecap="round"/>
+          <ellipse cx="84" cy="48" rx="57" ry="25" fill="${primary}"/>
+          <circle cx="137" cy="42" r="26" fill="${primary}"/>
+          <ellipse cx="145" cy="29" rx="12" ry="24" fill="${dark}" transform="rotate(-28 145 29)"/>
+          <ellipse cx="157" cy="48" rx="16" ry="11" fill="${dark}"/>
+          <circle cx="141" cy="39" r="4" fill="#31252a"/>
+          <circle cx="142" cy="38" r="1.3" fill="#fff"/>
+          <circle cx="167" cy="46" r="3" fill="#31252a"/>
+          <path d="M155 55 Q161 60 166 55" fill="none" stroke="#562e34" stroke-width="2" stroke-linecap="round"/>
+          <path d="M99 43 Q113 30 126 40" fill="none" stroke="${dark}" stroke-width="4" stroke-linecap="round" opacity=".7"/>
+          <g class="dog-leg"><path d="M54 61 L50 77 Q54 82 60 77 L64 62" fill="${dark}"/></g>
+          <g class="dog-leg back"><path d="M104 62 L108 78 Q114 82 118 76 L115 59" fill="${dark}"/></g>
+          <path d="M73 27 Q84 34 92 27" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".28"/>
+          <path d="M22 49 Q14 45 8 50" fill="none" stroke="${primary}" stroke-width="7" stroke-linecap="round"/>
+        </svg>`;
+    }
+
+    function spawnDog() {
+      const dog = document.createElement("button");
+      const colors = dogColors[Math.floor(Math.random() * dogColors.length)];
+      dog.className = "dachshund";
+      dog.type = "button";
+      dog.setAttribute("aria-label", "Поймать летающую таксу");
+      dog.innerHTML = dogSvg(colors[0], colors[1]);
+      dog.style.top = `${Math.max(95, Math.random() * (window.innerHeight - 180))}px`;
+      dog.style.setProperty("--duration", `${7 + Math.random() * 5}s`);
+      dog.style.setProperty("--scale", `${.72 + Math.random() * .45}`);
+
+      dog.addEventListener("click", event => {
+        event.stopPropagation();
+        score += 1;
+        scoreNode.textContent = score;
+        dog.classList.add("caught");
+        burst(event.clientX, event.clientY);
+        showToast(score % 5 === 0 ? `Уже ${score}! Профессиональная ловля такс.` : "Такса поймана и обнята");
+        setTimeout(() => dog.remove(), 500);
+      });
+
+      document.body.append(dog);
+      setTimeout(() => dog.remove(), 13000);
+    }
+
+    setInterval(spawnDog, isCompact ? 3200 : 2400);
+    setTimeout(spawnDog, 700);
+    setTimeout(spawnDog, 1800);
+
+    cheerButton.addEventListener("click", event => {
+      showToast(messages[Math.floor(Math.random() * messages.length)]);
+      burst(event.clientX, event.clientY, 34);
+      for (let i = 0; i < 3; i++) setTimeout(spawnDog, i * 280);
+    });
+
+    jaw.addEventListener("click", event => {
+      jaw.classList.add("wound");
+      showToast("Челюсть заведена на полную мощность!");
+      burst(event.clientX, event.clientY, 20);
+      setTimeout(() => jaw.classList.remove("wound"), 3000);
+    });
+
+    if (window.matchMedia("(pointer: fine)").matches) {
+      document.addEventListener("pointermove", event => {
+        pupils.forEach(pupil => {
+          const eye = pupil.parentElement.getBoundingClientRect();
+          const dx = event.clientX - (eye.left + eye.width / 2);
+          const dy = event.clientY - (eye.top + eye.height / 2);
+          const angle = Math.atan2(dy, dx);
+          pupil.style.transform = `translate(${Math.cos(angle) * 6}px, ${Math.sin(angle) * 7}px)`;
+        });
+      }, { passive: true });
+    }
+  </script>
+</body>
+</html>
